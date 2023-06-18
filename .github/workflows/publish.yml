@@ -40,7 +40,9 @@ jobs:
 
     - name: Build and publish iOS
       if: matrix.os == 'macos-latest'
-      run: dotnet publish -f net7.0-ios -r ios-arm64 --self-contained true -c Release --output ./publish/ios/
+      run: |
+        dotnet workload restore
+        dotnet publish -f net7.0-ios -r ios-arm64 --self-contained true -c Release --output ./publish/ios/
       # dotnet publish -c Release -r ios-arm64 --self-contained true -p:PublishSingleFile=true --output ./publish/ios/
 
     - name: Create artifacts
