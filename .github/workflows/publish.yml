@@ -11,7 +11,10 @@ jobs:
 
     strategy:
       matrix:
-        os: [windows-latest, macos-latest]
+        os: [
+          windows-latest,
+          #macos-latest
+        ]
 
     steps:
     - name: Checkout repository
@@ -44,13 +47,13 @@ jobs:
       if: matrix.os == 'windows-latest'
       env:
         ANDROID_SIGNING_PASSWORD: ${{ secrets.ANDROID_SIGNING_PASSWORD }}
+      working-directory: BlazorMauiApp1
       run: dotnet publish -f net7.0-android33.0 -r android-arm64 --self-contained true -c Release -p:AndroidSigningKeyAlias=mauiblazor -p:AndroidSigningKeyStore=MauiBlazor.keystore -p:AndroidKeyStore=true -p:AndroidSigningKeyPass=env:ANDROID_SIGNING_PASSWORD -p:AndroidSigningStorePass=env:ANDROID_SIGNING_PASSWORD --output ./publish/android/
-      # dotnet publish -c Release -r android-arm64 --self-contained true -p:PublishSingleFile=true --output ./publish/android/
 
     - name: Build and publish iOS
       if: matrix.os == 'macos-latest'
+      working-directory: BlazorMauiApp1
       run: dotnet publish -f net7.0-ios -r ios-arm64 --self-contained true -c Release --output ./publish/ios/
-      # dotnet publish -c Release -r ios-arm64 --self-contained true -p:PublishSingleFile=true --output ./publish/ios/
 
     - name: Create artifacts
       uses: actions/upload-artifact@v2
