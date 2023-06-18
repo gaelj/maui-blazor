@@ -56,7 +56,7 @@ jobs:
       run: dotnet publish -f net7.0-ios -r ios-arm64 --self-contained true -c Release --output ./publish/ios/
 
     - name: Create artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: Publish Output
         path: ./BlazorMauiApp1/publish
