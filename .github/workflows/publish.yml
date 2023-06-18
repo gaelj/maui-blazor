@@ -2,10 +2,11 @@ name: Build and Publish
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*.*.*'
 
 jobs:
+
   build-and-publish:
     runs-on: ${{ matrix.os }}
 
@@ -63,6 +64,7 @@ jobs:
 
     - name: Create Release
       uses: actions/create-release@v1
+      id: create_release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
