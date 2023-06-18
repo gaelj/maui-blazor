@@ -26,7 +26,7 @@ jobs:
       if: matrix.os == 'windows-latest'
       run: |
         curl -LO https://aka.ms/vs/17/release/vs_buildtools.exe
-        .\vs_buildtools.exe --quiet --norestart --wait --noUpdateInstaller --noWeb --add Microsoft.VisualStudio.Workload.XamarinBuildTools --add Microsoft.VisualStudio.Workload.NetCoreBuildTools --add Microsoft.NetCore.Component.SDK;includeRecommended;includeOptional
+        .\vs_buildtools.exe --quiet --norestart --wait --noUpdateInstaller --noWeb --add Microsoft.VisualStudio.Workload.XamarinBuildTools --add Microsoft.VisualStudio.Workload.NetCoreBuildTools --add Microsoft.NetCore.Component.SDK
       #  .\vs_buildtools.exe --layout .\vs_BuildTools
       #  cd vs_BuildTools
       #  .\vs_setup.exe      --quiet --norestart --wait --noUpdateInstaller --noWeb --add Microsoft.VisualStudio.Workload.XamarinBuildTools --add Microsoft.VisualStudio.Workload.NetCoreBuildTools --add Microsoft.NetCore.Component.SDK;includeRecommended;includeOptional
