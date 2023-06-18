@@ -36,7 +36,7 @@
         <RepositoryType>git</RepositoryType>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-android33.0|AnyCPU'">
+    <!-- <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-android33.0|AnyCPU'">
       <AndroidKeyStore>True</AndroidKeyStore>
       <AndroidSigningKeyAlias>mauiblazor</AndroidSigningKeyAlias>
     </PropertyGroup>
@@ -45,7 +45,7 @@
       <AndroidKeyStore>True</AndroidKeyStore>
       <AndroidSigningKeyAlias>mauiblazor</AndroidSigningKeyAlias>
       <AndroidPackageFormat>apk</AndroidPackageFormat>
-    </PropertyGroup>
+    </PropertyGroup> -->
 
     <ItemGroup>
         <!-- App Icon -->
