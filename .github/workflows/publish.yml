@@ -1,0 +1,80 @@
+name: Build and Publish
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-publish:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '7.0.304'  # Replace with the desired .NET version
+
+    - name: Install Xamarin Visual Studio Build Tools
+      if: matrix.os == 'windows-latest'
+      run: |
+        curl -LO https://aka.ms/vs/17/release/vs_buildtools.exe
+        start /wait vs_buildtools.exe --quiet --norestart --wait --installPath "C:\BuildTools" --add Microsoft.VisualStudio.Workload.XamarinBuildTools --add Microsoft.VisualStudio.Workload.NetCoreBuildTools --add Microsoft.NetCore.Component.SDK
+
+    - name: Restore NuGet packages
+      run: dotnet restore
+
+    - name: Build and publish Android
+      if: matrix.os == 'windows-latest'
+      env:
+        ANDROID_SIGNING_PASSWORD: ${{ secrets.ANDROID_SIGNING_PASSWORD }}
+      run: dotnet publish -f net7.0-android33.0 -r android-arm64 --self-contained true -c Release -p:AndroidSigningKeyAlias=mauiblazor -p:AndroidSigningKeyStore=MauiBlazor.keystore -p:AndroidKeyStore=true -p:AndroidSigningKeyPass=env:ANDROID_SIGNING_PASSWORD -p:AndroidSigningStorePass=env:ANDROID_SIGNING_PASSWORD --output ./publish/android/
+      # dotnet publish -c Release -r android-arm64 --self-contained true -p:PublishSingleFile=true --output ./publish/android/
+
+    - name: Build and publish iOS
+      if: matrix.os == 'macos-latest'
+      run: dotnet publish -f net7.0-ios -r ios-arm64 --self-contained true -c Release --output ./publish/ios/
+      # dotnet publish -c Release -r ios-arm64 --self-contained true -p:PublishSingleFile=true --output ./publish/ios/
+
+    - name: Create artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: Publish Output
+        path: ./publish
+
+    - name: Create Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload APK
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./publish/android/com.companyname.blazormauiapp1-Signed.apk
+        asset_name: com.companyname.blazormauiapp1-Signed.apk
+        asset_content_type: application/vnd.android.package-archive
+
+    - name: Upload iOS
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./publish/ios/BlazorMauiApp1.ipa
+        asset_name: BlazorMauiApp1.ipa
+        asset_content_type: application/octet-stream
