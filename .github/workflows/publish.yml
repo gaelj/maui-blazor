@@ -28,6 +28,10 @@ jobs:
         curl -LO https://aka.ms/vs/17/release/vs_buildtools.exe
         start /wait vs_buildtools.exe --quiet --norestart --wait --installPath "C:\BuildTools" --add Microsoft.VisualStudio.Workload.XamarinBuildTools --add Microsoft.VisualStudio.Workload.NetCoreBuildTools --add Microsoft.NetCore.Component.SDK
 
+    - name: Install maui-android workload
+      if: matrix.os == 'macos-latest'
+      run: dotnet workload restore
+
     - name: Restore NuGet packages
       run: dotnet restore
 
@@ -40,9 +44,7 @@ jobs:
 
     - name: Build and publish iOS
       if: matrix.os == 'macos-latest'
-      run: |
-        dotnet workload restore
-        dotnet publish -f net7.0-ios -r ios-arm64 --self-contained true -c Release --output ./publish/ios/
+      run: dotnet publish -f net7.0-ios -r ios-arm64 --self-contained true -c Release --output ./publish/ios/
       # dotnet publish -c Release -r ios-arm64 --self-contained true -p:PublishSingleFile=true --output ./publish/ios/
 
     - name: Create artifacts
